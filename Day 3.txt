@@ -1,0 +1,174 @@
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+
+logistic = LogisticRegression()
+
+#set the parmeter
+param_grid = {'penalty':['l1','l2'], 'C' : [0.001, 0.01, 0.1, 0.5, 1, 10, 100, 300, 500, 1000] }
+
+#fit the parameter 
+grid_lr = GridSearchCV(LogisticRegression(), param_grid, n_jobs = -1, verbose = 3, cv = 5)
+#training model
+grid_lr.fit(X_train, y_train)
+
+grid_lr.best_score_
+
+grid_lr.best_params_
+
+#prediction
+y_pred_lr_train = grid_lr.predict(X_train)
+y_pred_lr_test = grid_lr.predict(X_test)
+
+#evaluation matrix on train data
+score = get_score(y_train, y_pred_lr_train)
+train_matrix['Logistic Reggression'] =score
+train_matrix
+
+#evaluation matrix on test data
+score = get_score(y_test, y_pred_lr_test)
+test_matrix['Logistic Reggression'] =score
+test_matrix
+
+#confusion matrix
+get_cm(y_train, y_pred_lr_train)
+
+from sklearn.tree import DecisionTreeClassifier
+
+# creating param dict to check diffirent value of parameter
+max_depth=[13,14,15,16,17,18,19,20]
+min_samples_leaf=[10,11,12,13,14,15]
+splitter = ['random']
+params = {'splitter':splitter, 'max_depth' :max_depth, 'min_samples_leaf': min_samples_leaf}
+
+#fit the parameter
+dt_clf = GridSearchCV(DecisionTreeClassifier(), param_grid=params,verbose=0)
+#training model
+dt_clf.fit(X_train, y_train)
+
+dt_clf.best_params_
+
+#prediction
+y_pred_dt_train = dt_clf.predict(X_train)
+y_pred_dt_test = dt_clf.predict(X_test)
+
+#evaluation matrix on train data
+score = get_score(y_train, y_pred_dt_train)
+train_matrix['Decision Tree'] =score
+train_matrix
+
+#evaluation matrix on test data
+score = get_score(y_test, y_pred_dt_test)
+test_matrix['Decision Tree'] =score
+test_matrix
+
+#confusion matrix
+get_cm(y_train, y_pred_dt_train)
+
+from sklearn.neighbors import KNeighborsClassifier
+
+param_grid = {'n_neighbors' : [2,3,4,5]}
+
+#fit the parameter
+knn = GridSearchCV(KNeighborsClassifier() , param_grid, n_jobs = -1, verbose = 3, cv = 3)
+#training model
+knn.fit(X_train, y_train)
+
+knn.best_params_
+
+#prediction
+y_pred_knn_train = knn.predict(X_train)
+y_pred_knn_test = knn.predict(X_test)
+
+#evaluation matrix on train data
+score = get_score(y_train, y_pred_knn_train)
+train_matrix['KNN'] =score
+train_matrix
+
+#evaluation matrix on test data
+score = get_score(y_test, y_pred_knn_test)
+test_matrix['KNN'] =score
+test_matrix
+
+#confusion matrix
+get_cm(y_train, y_pred_knn_train)
+
+#import the packages
+from sklearn.ensemble import RandomForestClassifier
+rf_clf = RandomForestClassifier(max_depth = 25, min_samples_leaf=12)
+
+#training model
+rf_clf.fit(X_train, y_train)
+
+#prediction
+y_pred_rf_train = rf_clf.predict(X_train)
+y_pred_rf_test = rf_clf.predict(X_test)
+
+#evaluation matrix on train data
+score = get_score(y_train, y_pred_rf_train)
+train_matrix['Random forest'] =score
+train_matrix
+
+#evaluation matrix on test data
+score = get_score(y_test, y_pred_rf_test)
+test_matrix['Random forest'] =score
+test_matrix
+
+#confusion matrix
+get_cm(y_train, y_pred_rf_train)
+
+#import the packages
+from sklearn.svm import SVC
+# defining parameter range 
+param_grid = {'C': [100],'kernel': ['rbf']}
+
+#set the parmeter
+#fit the parameter
+svc_clf = GridSearchCV(SVC(probability=True), param_grid, scoring = 'accuracy', n_jobs = -1, verbose = 3, cv = 3)
+svc_clf.fit(X_train, y_train)
+
+# Get the predicted classes
+y_pred_svc_train = svc_clf.predict(X_train)
+y_pred_svc_test = svc_clf.predict(X_test)
+
+#evaluation matrix on train data
+score = get_score(y_train, y_pred_svc_train)
+train_matrix['SVC'] =score
+train_matrix
+
+#evaluation matrix on test data
+score = get_score(y_test, y_pred_svc_test)
+test_matrix['SVC'] =score
+test_matrix
+
+#confusion matrix
+get_cm(y_train, y_pred_svc_train)
+
+from sklearn.ensemble import GradientBoostingClassifier
+
+#setting parameters for xgboost
+parameters={'max_depth':[12],'min_samples_leaf':[12],'learning_rate':[.05]}
+
+#set the parmeter
+#fit the parameter
+gb_clf = GridSearchCV(GradientBoostingClassifier(), param_grid = parameters, scoring = 'accuracy', n_jobs = -1, verbose = 3, cv = 3)
+gb_clf.fit(X_train, y_train)
+
+gb_clf.best_params_
+
+
+# Get the predicted classes
+y_pred_gb_train = gb_clf.predict(X_train)
+y_pred_gb_test = gb_clf.predict(X_test)
+
+#evaluation matrix on train data
+score = get_score(y_train, y_pred_gb_train)
+train_matrix['GB'] =score
+train_matrix
+
+#evaluation matrix on test data
+score = get_score(y_test, y_pred_gb_test)
+test_matrix['GB'] =score
+test_matrix
+
+#confusion matrix
+get_cm(y_train, y_pred_gb_train)
