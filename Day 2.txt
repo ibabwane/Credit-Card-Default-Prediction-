@@ -1,0 +1,88 @@
+#using SMOTE for managing target variable and improving imbalance
+from imblearn.over_sampling import SMOTE
+smote = SMOTE()
+X_smote, Y_smote = smote.fit_resample(data.iloc[:,0:-1], data['default_payment_next_month']) 
+
+print('Original dataset shape', len(data))
+print('Resampled dataset shape', len(Y_smote))
+
+df = X_smote
+df['default_payment_next_month'] = Y_smote
+df.head()
+
+df.shape
+
+#check target variable value proportion
+counts = df['default_payment_next_month'].value_counts().sort_index()
+fig = plt.figure(figsize=(9, 6))
+ax = fig.gca()
+counts.plot.bar(ax = ax, color='g')
+ax.set_title('default_payment_next_month' + 'counts')
+ax.set_xlabel('default_payment_next_month') 
+ax.set_ylabel("Frequency")
+
+#get dummies 
+df = pd.get_dummies(df, columns=['EDUCATION','MARRIAGE'])
+#get dummies
+df = pd.get_dummies(df, columns = ['PAY_1',	'PAY_2',	'PAY_3',	'PAY_4',	'PAY_5',	'PAY_6'])
+
+#importing packages
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+
+
+from sklearn import metrics  
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import plot_confusion_matrix
+from sklearn.metrics import classification_report
+from sklearn.metrics import plot_roc_curve
+from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import plot_precision_recall_curve
+
+#independetn feature
+X_ = pd.DataFrame(df.drop('default_payment_next_month', axis=1))
+
+#dependent feature
+Y = df['default_payment_next_month'] 
+
+#standardise the x value by using satandardscaler
+scaler = StandardScaler()
+X = scaler.fit_transform(X_)
+
+#split the data set
+X_train, X_test, y_train, y_test = train_test_split(X_, Y, test_size=0.3, random_state=42)
+
+#create a function to calculate evaluation matrices
+from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_score, roc_auc_score, confusion_matrix, roc_curve, auc
+
+train_matrix = pd.DataFrame(index=['accuracy', 'precision', 'recall', 'f1_score_', 'roc'])
+test_matrix = pd.DataFrame(index=['accuracy', 'precision', 'recall', 'f1_score_', 'roc'])
+
+def get_score(y_true, y_pred):
+  accuracy = accuracy_score(y_true,y_pred)
+  precision = precision_score(y_true,y_pred)
+  recall = recall_score(y_true,y_pred)
+  f1_score_ = f1_score(y_true,y_pred)
+  roc = roc_auc_score(y_true,y_pred)
+
+  lst = [accuracy, precision, recall, f1_score_, roc]
+
+  return lst
+
+def get_cm(y_true, y_pred):
+  # Get the confusion matrix for both train and test
+  cm = confusion_matrix(y_true, y_pred)
+  print(cm)
+
+  labels = ['Not Defaulter', 'Defaulter']
+  ax= plt.subplot()
+  sns.heatmap(cm, annot=True, ax = ax) #annot=True to annotate cells
+  
+  # labels, title and ticks
+  ax.set_xlabel('Predicted labels')
+  ax.set_ylabel('True labels')
+  ax.set_title('Confusion Matrix')
+  ax.xaxis.set_ticklabels(labels)
+  ax.yaxis.set_ticklabels(labels)
