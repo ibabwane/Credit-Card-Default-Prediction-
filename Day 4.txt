@@ -1,0 +1,45 @@
+#all models evaluation matrices
+final_matrices=test_matrix.transpose().reset_index().rename(columns={'index':'Models'})
+
+#plot recall scores for all model
+plt.figure(figsize=(15,10))
+sns.barplot(x='Models',y='recall',data=final_matrices)
+
+pip install shap
+
+#import shap 
+from sklearn.tree import export_graphviz
+
+import shap
+import graphviz
+sns.set_style('darkgrid')
+
+for_instance = 2
+
+
+# Initialize JavaScript visualizations in notebook environment
+shap.initjs()
+# Define a tree explainer for the built model
+explainer_gb = shap.TreeExplainer(gb_clf.best_estimator_)
+# obtain shap values for the first row of the test data
+gb_shap_values = explainer_gb(X_test,check_additivity=False)
+# # visualize the first prediction's explanation with a force plot
+shap.plots.force(gb_shap_values[for_instance])
+
+# Obtain a Scatter Summary Plot 
+shap.summary_plot(gb_shap_values, X_test)
+
+# Obtain a Bar Summary Plot
+shap.summary_plot(gb_shap_values, X_train, plot_type="bar")
+
+pip install eli5
+
+#import eli5
+import eli5 as eli
+feature_names=list(X_.columns)
+
+for_instance=2
+
+ eli.show_prediction(gb_clf.best_estimator_, X_.reset_index(drop=True).loc[[for_instance]],
+                    feature_names=feature_names,
+                    show_feature_values=True)
